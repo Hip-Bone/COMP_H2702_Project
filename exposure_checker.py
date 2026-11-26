@@ -39,7 +39,7 @@ def load_ports(filepath): # Loads ports from text file and returns a list of val
                 if line.isdigit() and int(line) in ALLOWED_PORTS:
                     ports.append(int(line))
                 else:
-                    print(f"[WARN] Port skipped (not in allowed ports): {line}")
+                    print(f"[WARNING] Port skipped (not in allowed ports): {line}")
             return ports or sorted(ALLOWED_PORTS)
     except OSError:
         return sorted(ALLOWED_PORTS) # sorted(ALLOWED_PORTS) ensures the set turns into a list and puts the ports in 
