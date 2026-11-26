@@ -22,10 +22,10 @@ def load_targets(filepath): # Loads target address from text file
                 if not line or line.startswith("#"): #if not line checks if the line is completely empty
                     continue
                 targets.append(line)
-            return targets or ["127.0.0.1"]
+            return targets or None
         
     except OSError:
-        return ["127.0.0.1"]
+        return None
     
 def load_ports(filepath): # Loads ports from text file and returns a list of validated ports. Invalid lines are skipped with a warning
 
@@ -40,10 +40,9 @@ def load_ports(filepath): # Loads ports from text file and returns a list of val
                     ports.append(int(line))
                 else:
                     print(f"[WARNING] Port skipped (not in allowed ports): {line}")
-            return ports or sorted(ALLOWED_PORTS)
+            return ports or None
     except OSError:
-        return sorted(ALLOWED_PORTS) # sorted(ALLOWED_PORTS) ensures the set turns into a list and puts the ports in 
-                                     # the order of lowest to highest starting from the left
+        return None
 
 def validate_target(target): # Ensures the target is local-only. Returns (ip), raises ValueError for invalid targets
 
@@ -152,10 +151,10 @@ def calculate_risk(results, http_info): # Simple scan loop for risk score calcul
     open_count = 0
     score = 0
 
-    for r in results: # For loop that runs for each entry in the port list
-        if r["state"] == "OPEN":
+    for result in results: # For loop that runs for each entry in the port list
+        if result["state"] == "OPEN":
             open_count += 1 # Stores the amount of ports for later use
-            if r["port"] == 20002:
+            if result["port"] == 20002:
                 score += 45 # Unexpected open port carries a heavy point weight
             else:
                 score += 15 # Expectable local service
@@ -187,12 +186,12 @@ def generate_report(results, http_info, risk): # Builds a structured report and 
 
     scan_lines = []
     # Formats each port result into an aligned line, appending banner or error details if present
-    for r in results:
-        line = (f"  Port {r['port']:>5}  {r['state']:>7} | Target: {r['target']}")
-        if r.get("banner"):
-            line += (f" | Banner: {r['banner']}")
-        if r.get("error"):
-            line += (f" | Error: {r['error']}")
+    for result in results:
+        line = (f"  Port {result['port']:>5}  {result['state']:>7} | Target: {result['target']}")
+        if result.get("banner"):
+            line += (f" | Banner: {result['banner']}")
+        if result.get("error"):
+            line += (f" | Error: {result['error']}")
         scan_lines.append(line)
 
     if http_info.get("status_code"): # Formats HTTP response details if reachable or falls back to the error message
@@ -277,19 +276,27 @@ def main(): # Executes 6 step procedure to check the local network exposure, use
 
     print("\n[1] Loading targets and ports from files...")
     targets = load_targets(os.path.join(script_dir, "targets.txt"))
+    if targets is None:
+        print("File 'targets.txt' not found or empty, terminating.")
+        return
+
     ports = load_ports(os.path.join(script_dir, "ports.txt"))
+    if ports is None:
+        print("File 'ports.txt' not found or empty, terminating.")
+        return # Step 1 terminates the script if any of the 2 files are missing and/or empty
+
     print(f"  Targets : {targets}")
     print(f"  Ports   : {ports}")
-
+    
     time.sleep(1)
 
     print("\n[2] Validating if target is local...")
-    for t in targets:
+    for target in targets:
         try:
-            resolved = validate_target(t)
-            print(f"  {t} -> {resolved} [LOCAL]")
+            resolved = validate_target(target)
+            print(f"  {target} -> {resolved} [LOCAL]")
         except ValueError as ex:
-            print(f"  {t} -> [BLOCKED] {ex}")
+            print(f"  {target} -> [BLOCKED] {ex}")
             print("Terminating Network Exposure Check.")
             return
         
@@ -298,9 +305,9 @@ def main(): # Executes 6 step procedure to check the local network exposure, use
     print("\n[3] Scanning ports...")
     results = check_all_ports(targets, ports)
 
-    for r in results:
-        banner_preview = (f' | Banner: "{r["banner"]}"' if r.get("banner") else "")
-        print(f"  Port {r['port']:>5} : {r['state']}{banner_preview}") # Appends a banner string if the port returned one
+    for result in results:
+        banner_preview = (f' | Banner: "{result["banner"]}"' if result.get("banner") else "")
+        print(f"  Port {result['port']:>5} : {result['state']}{banner_preview}") # Appends a banner string if the port returned one
 
     time.sleep(1)
 
