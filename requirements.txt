@@ -1,5 +1,6 @@
+# python 3.14 is recommended for this script.
 # No external third-party packages required.
-# The program is built entirely with the Python 3 standard library:
+# The script is built entirely with the Python 3 standard library:
 # - import os
 # - import sys
 # - import socket
