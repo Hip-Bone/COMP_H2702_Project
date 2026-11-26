@@ -19,16 +19,14 @@ def load_targets(filepath): # Loads target address from text file
             targets = []
             for line in file:
                 line = line.strip()
-                if not line or line.startswith("#"): #if not line checks if the line is completely empty 
+                if not line or line.startswith("#"): #if not line checks if the line is completely empty
                     continue
-                if line in ("127.0.0.1", "localhost"):
-                    targets.append(line)
-                else:
-                    print(f"[BLOCKED] Non-local target rejected: {line}")
+                targets.append(line)
             return targets or ["127.0.0.1"]
+        
     except OSError:
         return ["127.0.0.1"]
-
+    
 def load_ports(filepath): # Loads ports from text file and returns a list of validated ports. Invalid lines are skipped with a warning
 
     try:
@@ -58,7 +56,7 @@ def validate_target(target): # Ensures the target is local-only. Returns (ip), r
         raise ValueError(
             f"Target '{target}' resolves to {ip} (non-local). "
             "Only 127.x.x.x addresses are allowed by default."
-        ) # Checks if the target address is in the localhost range of 127.X.X.X, raises error if not
+        ) # Checks if the target address is in the localhost range of 127.X.X.X, if not 127.X.X.X it terminates the script in main()
 
     return ip
 
@@ -80,7 +78,7 @@ def check_port(target, port, timeout=3.0): # Checks the OPEN/CLOSED status of ea
 
             sock.settimeout(1.0)
             try:
-                raw = sock.recv(256) # Reads up to 256 bytes from the socket
+                raw = sock.recv(256) # Reads up to 256 bytes from the socket to capture service banners
                 if raw:
                     # Converts the raw bytes from the port into readable text and replaces unreadable characters
                     result["banner"] = raw.decode("utf-8", errors="replace").strip()
@@ -93,14 +91,14 @@ def check_port(target, port, timeout=3.0): # Checks the OPEN/CLOSED status of ea
     except OSError as ex:
         result["error"] = str(ex) # Inserts OSError message directly into the "error" paramterer in the "result" dictionary
                                   # manually set as a string, this is to prevent json.dump from crashing if the error pops up,
-                                  # other instances of this error handler do not need this as "f" strings already auto-converts it
+                                  # other instances of this error handler do not need this as "f" strings already auto-convert it
 
     return result
 
 def check_all_ports(targets, ports): # Validates the targets and scans every (target, port) pair
 
     all_results = []
-    
+
     for target in targets:
         try:
             resolved_ip = validate_target(target)
@@ -158,9 +156,9 @@ def calculate_risk(results, http_info): # Simple scan loop for risk score calcul
         if r["state"] == "OPEN":
             open_count += 1 # Stores the amount of ports for later use
             if r["port"] == 20002:
-                score += 45 # Unexpected port carries heavy weight
+                score += 45 # Unexpected open port carries a heavy point weight
             else:
-                score += 15 # Expected local service
+                score += 15 # Expectable local service
 
     if http_info.get("status_code") == 200: # Bonus: healthy HTTP service verification
         score -= 10
@@ -292,7 +290,9 @@ def main(): # Executes 6 step procedure to check the local network exposure, use
             print(f"  {t} -> {resolved} [LOCAL]")
         except ValueError as ex:
             print(f"  {t} -> [BLOCKED] {ex}")
-
+            print("Terminating Network Exposure Check.")
+            return
+        
     time.sleep(1)
 
     print("\n[3] Scanning ports...")
