@@ -33,7 +33,18 @@ Additionally, the `check_http_service(target, port = 18080)` and `calculate_risk
 2. The `if result["port"] == 20002` code block inside the `for result in results` in the `calculate_risk` function.
 3. Optional change to the port score weight immediately after above code block: `score += 45`.
 
-| Column 1 | Column 2 |
-| :--- | :--- |
-| Row 1, Item A | Row 1, Item B |
-| Row 2, Item A | Row 2, Item B |
+## Requirements: ##
+
+**Python 3.14 is recommended for this script.**
+**No external third-party packages required.**
+**The script is built entirely with the Python 3 standard library:**
+
+| modules: |
+| :--- |
+| import os |
+| import sys |
+| import socket |
+| import json |
+| import http.client |
+| import time |
+|from datetime import datetime, timezone|
