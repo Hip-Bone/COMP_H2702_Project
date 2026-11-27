@@ -7,7 +7,7 @@
 A simple network exposure checker, essentially a script that scans 4 ports via passive port pinging in TCP. 
 The scope is quite limited, only 4 specific ports and only 1 target IP address are authorised parameters.
 
-How to Run:
+## How to Run: ##
 1.  If downloading as a .zip, extract the folder anywhere, if downloading each file, create a common folder for them.
 2.	Open Terminal 1 in the project folder and start the test service python file: `python local_test_services.py`.
 3.	Open Terminal 2 in the same folder and run the exposure checker python file: `python exposure_checker.py`.
