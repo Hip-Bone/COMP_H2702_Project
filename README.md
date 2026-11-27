@@ -5,7 +5,7 @@
 **All files should be kept in the same folder to ensure reliable behavior.**
 
 A simple network exposure checker script that scans 4 ports via passive port pinging in TCP and reports their status as OPEN/CLOSED. 
-Generates a report to both .txt and .json formats. The scope is quite limited as only 4 specific ports and only specific 1 IP address (localhost) are authorised targets.
+Generates a report to both .txt and .json formats. The scope is quite limited as only 4 specific ports and only 1 specific IP address (localhost) are authorised targets.
 
 ## How to Run: ##
 1.  If downloading as a .zip, extract the folder anywhere, if downloading each file, create a common folder for them.
