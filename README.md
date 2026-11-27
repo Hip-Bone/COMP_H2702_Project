@@ -41,10 +41,10 @@ Additionally, the `check_http_service(target, port = 18080)` and `calculate_risk
 
 | modules: |
 | :--- |
-| import os |
-| import sys |
-| import socket |
-| import json |
-| import http.client |
-| import time |
-|from datetime import datetime, timezone|
+| `import os` |
+| `import sys` |
+| `import socket` |
+| `import json` |
+| `import http.client` |
+| `import time` |
+| `from datetime import datetime, timezone` |
