@@ -15,7 +15,7 @@ The scope is quite limited, only 4 specific ports and only 1 target IP address a
 
 
 While this is
-not within the scope and should never be done outside of a controlled test environment akin to what this script was designed for,
+**not** within the scope and should never be done outside of a controlled test environment akin to what this script was designed for,
 the script *can* technically be modified to allow different ports or IP addresses by changing the integers inside the `ALLOWED_PORTS` constant 
 and editing the following code block:
 ```python
