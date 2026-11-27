@@ -48,3 +48,10 @@ Additionally, the `check_http_service(target, port = 18080)` and `calculate_risk
 | `import http.client` |
 | `import time` |
 | `from datetime import datetime, timezone` |
+
+## Files ## 
+•	`targets.txt`: Target host address (restricted to 127.0.0.1).
+•	`ports.txt`: Fixed test ports (18080, 19090, 20001, 20002).
+•	`local_test_services.py`: Supplied local TCP banner listeners and HTTP test service on port 18080.
+•	`exposure_checker.py`: The network exposure checker script file.
+
