@@ -19,6 +19,10 @@ and editing the following code block:
 Simply edit `("127.")` to a different address like 192.168.X.X or any other desired address. Then update or remove 
 the `"Only 127.x.x.x addresses are allowed by default"` disclaimer or change it to the new whitelisted address.
 
+Additionally, the `check_http_service(target, port = 18080)` and `calculate_risk(results, http_info)` functions would also have to be changed, specifically:
+1. The hardcoded port inside the `check_http_service` function parameter.
+2. The `if result["port"] == 20002` code block inside the `for result in results` in the `calculate_risk` function.
+
 | Column 1 | Column 2 |
 | :--- | :--- |
 | Row 1, Item A | Row 1, Item B |
